@@ -1,0 +1,41 @@
+name: Process changed files
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+jobs:
+  # This workflow contains a single job called "changed-files"
+  changed-files:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Add mask
+        run: |
+          source /home/ubuntu/.API_KEY
+          echo "::add-mask::$API_KEY"   
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v16
+        with:
+          since_last_remote_commit: "true"
+          files: |
+            databases/*.json
+
+      - name: Send changed files to fts3-connector
+        run: |
+          source /home/ubuntu/.API_KEY
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Calling with $file"
+            curl -H "X-AUTH-HEADER: $API_KEY" -H "Content-Type: application/json" -X POST -d @$file "http://127.0.0.1:8080/transfer/dry"
+          done
