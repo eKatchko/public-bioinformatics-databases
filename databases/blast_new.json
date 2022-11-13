@@ -1,0 +1,18 @@
+{
+  "name": "BLAST",
+  "path": "blast_db",
+  "versions": [
+    {
+      "name": "2022-11-14",
+      "path": "FASTA",
+      "files": [
+        {
+          "source": "https://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/pdbaa.gz"
+        },
+        {
+          "source": "https://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/swissprot.gz"
+        }
+      ]
+    }
+  ]
+}
